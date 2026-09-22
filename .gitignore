@@ -1,0 +1,90 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# =========================
+# Virtual Environment
+# =========================
+venv/
+.venv/
+env/
+ENV/
+
+# =========================
+# Environment / Secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Jupyter Notebook
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# ML / Dataset Artifacts
+# =========================
+artifacts/
+data/
+datasets/
+*.zip
+*.csv
+*.json
+
+# =========================
+# Model Files
+# =========================
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.h5
+*.keras
+*.pkl
+*.joblib
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+*.code-workspace
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# Testing / Coverage
+# =========================
+.pytest_cache/
+.coverage
+htmlcov/
+
+# =========================
+# Build / Packaging
+# =========================
+build/
+dist/
+*.egg-info/
+
+# =========================
+# Temporary Files
+# =========================
+*.tmp
+*.temp
+*.bak
