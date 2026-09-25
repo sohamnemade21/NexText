@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexText — AI Text Summarizer</title>
+    <meta name="description" content="Abstractive dialogue and text summarization powered by fine-tuned Pegasus and PyTorch.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="brand-badge">
+                <span class="dot"></span>
+                <span>NexText Core AI</span>
+            </div>
+            <h1 class="title">Abstractive Text Summarizer</h1>
+            <p class="subtitle">Transform long dialogues, conversations, and documents into concise, salient summaries using fine-tuned Pegasus transformer.</p>
+            
+            <div class="badges-container">
+                <div class="metric-pill">Model: <strong>Pegasus-SamSum</strong></div>
+                <div class="metric-pill">ROUGE-1: <strong>0.4527</strong></div>
+                <div class="metric-pill">ROUGE-2: <strong>0.2179</strong></div>
+                <div class="metric-pill">ROUGE-L: <strong>0.3578</strong></div>
+                <div class="metric-pill">Engine: <strong>PyTorch + CUDA</strong></div>
+            </div>
+        </header>
+
+        <!-- Alert Notification Box -->
+        <div id="alertBox" class="alert-box alert-error" role="alert">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span id="alertMessage"></span>
+        </div>
+
+        <!-- Main Workspace Grid -->
+        <main class="app-grid">
+            <!-- Input Panel -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        Source Content
+                    </h2>
+                    <button id="clearBtn" class="btn-icon-text" title="Clear input text">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Clear
+                    </button>
+                </div>
+
+                <div class="card-body">
+                    <!-- Quick Samples -->
+                    <div class="samples-bar">
+                        <span class="samples-label">Try sample:</span>
+                        <button class="btn-sample" onclick="loadSample('dialogue')">Dialogue</button>
+                        <button class="btn-sample" onclick="loadSample('review')">Product Review</button>
+                        <button class="btn-sample" onclick="loadSample('meeting')">Team Meeting</button>
+                    </div>
+
+                    <!-- Text Area -->
+                    <div class="textarea-wrapper">
+                        <textarea 
+                            id="inputText" 
+                            class="input-textarea" 
+                            placeholder="Enter or paste conversational dialogue, transcripts, or articles here (e.g. 'John: Hey, did you finish the report?...')"
+                            maxlength="20000"
+                        ></textarea>
+                    </div>
+
+                    <div class="textarea-footer">
+                        <span><span id="wordCount">0</span> words</span>
+                        <span class="char-counter"><span id="charCount">0</span> / 20,000 chars</span>
+                    </div>
+
+                    <div class="card-actions">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Tip: Press <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; color: #fff;">Ctrl + Enter</kbd> to summarize</span>
+                        <button id="summarizeBtn" class="btn btn-primary" disabled>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                            Summarize
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Output Panel -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        Generated Summary
+                    </h2>
+                    <button id="copyBtn" class="btn-icon-text" style="display: none;" title="Copy summary to clipboard">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+
+                <div class="card-body">
+                    <div class="output-container">
+                        <!-- Empty Placeholder -->
+                        <div id="emptyState" class="empty-state">
+                            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="3" y1="9" x2="21" y2="9"></line>
+                                <line x1="9" y1="21" x2="9" y2="9"></line>
+                            </svg>
+                            <p>Enter your text on the left and click <strong>Summarize</strong> to generate an AI summary.</p>
+                        </div>
+
+                        <!-- Loading State -->
+                        <div id="loadingState" class="loading-overlay">
+                            <div class="spinner"></div>
+                            <div class="loading-text">Generating Abstractive Summary...</div>
+                            <div class="loading-subtext">Executing Pegasus transformer inference on neural pipeline</div>
+                        </div>
+
+                        <!-- Summary Content -->
+                        <div id="summaryContent" class="summary-content">
+                            <p id="summaryText" class="summary-text"></p>
+                            
+                            <div class="summary-stats">
+                                <div class="stat-item">Original: <strong id="originalWords">0</strong> words</div>
+                                <div class="stat-item">Summary: <strong id="summaryWords">0</strong> words</div>
+                                <div class="stat-item">Reduction: <strong id="reductionRate">0%</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>NexText NLP Pipeline &bull; Pegasus fine-tuned on SamSum dataset &bull; <a href="/docs" target="_blank">Swagger API Docs</a> &bull; <a href="/health" target="_blank">Health Check</a></p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="status">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Script -->
+    <script src="/static/script.js"></script>
+</body>
+</html>

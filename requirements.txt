@@ -17,4 +17,6 @@ python-box
 ensure
 fastapi
 uvicorn
+python-multipart
 Jinja2
+accelerate

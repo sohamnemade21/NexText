@@ -1,5 +1,5 @@
 from NexText.config.configuration import ConfigurationManager
-from NexText.conponents.data_ingestion import DataIngestion
+from NexText.components.data_ingestion import DataIngestion
 from NexText.logging import logger
 
 
